@@ -61,6 +61,11 @@ export async function deleteQSO(id) {
   await api.delete(`/qso/${id}`);
 }
 
+export async function exportADIF() {
+  const response = await api.get('/qso/export/adif', { responseType: 'blob' });
+  return response.data; // Blob
+}
+
 // ── NL Parse ─────────────────────────────────────────────
 
 export async function parseQSO(text) {

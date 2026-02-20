@@ -1,6 +1,8 @@
 import uuid
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.responses import Response
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -49,6 +51,63 @@ async def list_qsos(
     rows = (await session.execute(items_q)).scalars().all()
 
     return QSOList(items=list(rows), total=total)
+
+
+@router.get("/export/adif")
+async def export_adif(
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+):
+    """Export all QSOs as an ADIF 3.1.4 compliant .adi file."""
+    q = (
+        select(QSO)
+        .where(QSO.created_by == user.id)
+        .order_by(QSO.qso_date.asc().nulls_last(), QSO.time_on.asc().nulls_last())
+    )
+    rows = (await session.execute(q)).scalars().all()
+
+    def field(name: str, value) -> str:
+        if value is None:
+            return ""
+        s = str(value).strip()
+        if not s:
+            return ""
+        return f"<{name}:{len(s)}>{s} "
+
+    now_str = datetime.utcnow().strftime("%Y%m%d %H%M%SZ")
+    lines: list[str] = [
+        f"HamLog ADIF Export — {now_str}",
+        f"<ADIF_VER:5>3.1.4 <PROGRAMID:6>HamLog <EOH>",
+        "",
+    ]
+
+    for qso in rows:
+        rec = field("CALL", qso.call)
+        if qso.qso_date:
+            rec += field("QSO_DATE", qso.qso_date.strftime("%Y%m%d"))
+        if qso.time_on:
+            rec += field("TIME_ON", qso.time_on.strftime("%H%M%S"))
+        rec += field("BAND", qso.band)
+        if qso.freq is not None:
+            rec += field("FREQ", f"{float(qso.freq):.4f}")
+        rec += field("MODE", qso.mode)
+        rec += field("RST_SENT", qso.rst_sent)
+        rec += field("RST_RCVD", qso.rst_rcvd)
+        rec += field("NAME", qso.name)
+        rec += field("QTH", qso.qth)
+        rec += field("GRIDSQUARE", qso.grid)
+        rec += field("DXCC", qso.dxcc)
+        rec += field("COMMENT", qso.notes)
+        rec += "<EOR>"
+        lines.append(rec)
+
+    content = "\n".join(lines) + "\n"
+    filename = f"hamlog_{datetime.utcnow().strftime('%Y%m%d')}.adi"
+    return Response(
+        content=content,
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 @router.get("/{qso_id}", response_model=QSORead)
