@@ -15,8 +15,8 @@ HamLog lets amateur radio operators log QSOs (contacts) by typing natural langua
 | Claude Haiku NL parsing endpoint | ✅ Complete | Few-shot prompt, structured JSON |
 | AI parsing confirmation UI | ✅ Complete | Highlighted fields, confidence bar |
 | HamQTH callsign lookup | ✅ Complete | Session-based XML API, 30-day cache, graceful degradation |
-| Contact log view, search & ADIF export | 📋 Planned | |
-| Code review | 📋 Planned | |
+| Contact log view, search & ADIF export | ✅ Complete | Sortable columns, callsign search, ADIF 3.1.4 download |
+| Code review | 🚧 In Progress | |
 
 ## Stack
 
@@ -77,3 +77,5 @@ The app runs without HamQTH credentials — callsign lookup degrades gracefully 
 - **Callsign auto-fill** — on callsign blur, HamQTH is queried for name, QTH, grid, and DXCC entity
 - **Graceful degradation** — HamQTH unavailable? No problem. Claude API error? Manual form still works.
 - **Keyboard-driven** — tab order optimized, Ctrl+Enter to save, UTC timestamps default automatically
+- **Sortable contact log** — click any column header to sort; smart band ordering (160m→70cm)
+- **ADIF export** — one-click download of the full log as a standards-compliant ADIF 3.1.4 `.adi` file
