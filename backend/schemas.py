@@ -58,3 +58,33 @@ class QSORead(QSOCreate):
 class QSOList(BaseModel):
     items: list[QSORead]
     total: int
+
+
+# ── NL parse schemas ─────────────────────────────────────────────────────────
+
+class ParseRequest(BaseModel):
+    text: str = Field(..., min_length=1, max_length=2000)
+
+
+class ParsedQSO(BaseModel):
+    """Parsed QSO fields — all optional since the AI may not extract every field."""
+
+    call: Optional[str] = None
+    band: Optional[str] = None
+    freq: Optional[float] = None
+    mode: Optional[str] = None
+    rst_sent: Optional[str] = None
+    rst_rcvd: Optional[str] = None
+    qso_date: Optional[date] = None
+    time_on: Optional[time] = None
+    name: Optional[str] = None
+    qth: Optional[str] = None
+    grid: Optional[str] = None
+    dxcc: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class ParseResponse(BaseModel):
+    parsed: ParsedQSO
+    confidence: float = Field(..., ge=0.0, le=1.0)
+    raw_text: str

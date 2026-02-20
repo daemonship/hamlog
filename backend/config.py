@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./hamlog_test.db"
     secret_key: str = "changeme-use-openssl-rand-hex-32"
     jwt_lifetime_seconds: int = 3600
+    anthropic_api_key: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
