@@ -217,7 +217,7 @@ function Field({ label, required, aiField, children }) {
   );
 }
 
-export default function QSOForm({ initialValues, aiPopulated, onSave, loading, error }) {
+export default function QSOForm({ initialValues, aiPopulated, onSave, loading, error, onCallsignBlur, callsignLookupStatus }) {
   const { values: initVals, aiFields: initAiFields } = buildInitial(initialValues);
   const [vals, setVals] = useState(initVals);
   const [aiFields, setAiFields] = useState(initAiFields);
@@ -308,11 +308,33 @@ export default function QSOForm({ initialValues, aiPopulated, onSave, loading, e
             value={vals.call}
             onChange={set('call')}
             onFocus={() => setFocused('call')}
-            onBlur={() => setFocused(null)}
+            onBlur={() => {
+              setFocused(null);
+              if (vals.call.trim().length >= 2 && onCallsignBlur) {
+                onCallsignBlur(vals.call.trim());
+              }
+            }}
             onKeyDown={handleKeyDown}
             style={css.callInput(focused === 'call', isAI('call'))}
           />
         </Field>
+        {callsignLookupStatus && (
+          <div style={{
+            fontFamily: 'monospace',
+            fontSize: '0.6rem',
+            color: callsignLookupStatus.type === 'loading' ? '#2a3f52'
+                 : callsignLookupStatus.type === 'found'   ? '#39d353'
+                 : callsignLookupStatus.type === 'error'   ? 'rgba(239,68,68,0.7)'
+                 : '#2a3f52',
+            marginTop: '4px',
+            letterSpacing: '0.05em',
+          }}>
+            {callsignLookupStatus.type === 'loading' && '⟳ looking up callsign…'}
+            {callsignLookupStatus.type === 'found'   && `✓ ${callsignLookupStatus.label}`}
+            {callsignLookupStatus.type === 'not_found' && '· callsign not in HamQTH database'}
+            {callsignLookupStatus.type === 'error'   && '· HamQTH lookup unavailable'}
+          </div>
+        )}
       </div>
 
       {/* ── Row 2: Date, Time ── */}

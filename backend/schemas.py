@@ -88,3 +88,14 @@ class ParseResponse(BaseModel):
     parsed: ParsedQSO
     confidence: float = Field(..., ge=0.0, le=1.0)
     raw_text: str
+
+
+# ── Callsign lookup schema ────────────────────────────────────────────────────
+
+class CallsignLookupResult(BaseModel):
+    callsign: str
+    name: Optional[str] = None
+    qth: Optional[str] = None
+    grid: Optional[str] = None
+    dxcc: Optional[str] = None
+    source: str  # "cache", "hamqth", or "none"

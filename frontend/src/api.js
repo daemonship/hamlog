@@ -68,4 +68,11 @@ export async function parseQSO(text) {
   return response.data; // { parsed, confidence, raw_text }
 }
 
+// ── Callsign Lookup ───────────────────────────────────────
+
+export async function lookupCallsign(callsign) {
+  const response = await api.get(`/callsign/${encodeURIComponent(callsign)}`);
+  return response.data; // { callsign, name, qth, grid, dxcc, source }
+}
+
 export default api;

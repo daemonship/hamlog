@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     secret_key: str = "changeme-use-openssl-rand-hex-32"
     jwt_lifetime_seconds: int = 3600
     anthropic_api_key: str = ""
+    hamqth_username: str = ""
+    hamqth_password: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

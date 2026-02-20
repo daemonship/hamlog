@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QSOForm from '../components/QSOForm';
-import { createQSO, parseQSO } from '../api';
+import { createQSO, parseQSO, lookupCallsign } from '../api';
 
 // ── Confidence bar ────────────────────────────────────────────────────────────
 
@@ -256,6 +256,11 @@ export default function NewQSO() {
   const [panelExpanded, setPanelExpanded] = useState(true);
   const [textFocused, setTextFocused] = useState(false);
 
+  // Callsign lookup state
+  const [lookupResult, setLookupResult] = useState(null);       // merged into form
+  const [callsignLookupStatus, setCallsignLookupStatus] = useState(null);
+  const lastLookedUp = useRef('');  // avoid re-fetching same call twice
+
   async function handleParse() {
     if (!nlText.trim() || parsing) return;
     setParsing(true);
@@ -279,6 +284,35 @@ export default function NewQSO() {
     setParseResult(null);
     setParseError('');
     setAiPopulated(false);
+  }
+
+  async function handleCallsignBlur(callsign) {
+    const upper = callsign.toUpperCase();
+    if (upper === lastLookedUp.current) return;
+    lastLookedUp.current = upper;
+
+    setCallsignLookupStatus({ type: 'loading' });
+    try {
+      const data = await lookupCallsign(upper);
+      if (data.source === 'none') {
+        setCallsignLookupStatus({ type: 'not_found' });
+        setLookupResult(null);
+        return;
+      }
+      // Build a label from whatever fields came back
+      const parts = [data.name, data.qth, data.dxcc].filter(Boolean);
+      setCallsignLookupStatus({ type: 'found', label: parts.join(' · ') || upper });
+      // Only keep non-null fields so they don't overwrite user edits
+      const merged = {};
+      if (data.name) merged.name = data.name;
+      if (data.qth)  merged.qth  = data.qth;
+      if (data.grid) merged.grid = data.grid;
+      if (data.dxcc) merged.dxcc = data.dxcc;
+      setLookupResult(Object.keys(merged).length ? merged : null);
+    } catch {
+      setCallsignLookupStatus({ type: 'error' });
+      setLookupResult(null);
+    }
   }
 
   function handleTextKeyDown(e) {
@@ -442,11 +476,13 @@ export default function NewQSO() {
 
       {/* ── QSO Form ── */}
       <QSOForm
-        initialValues={parseResult?.parsed}
+        initialValues={{ ...(parseResult?.parsed ?? {}), ...(lookupResult ?? {}) }}
         aiPopulated={aiPopulated}
         onSave={handleSave}
         loading={loading}
         error={error}
+        onCallsignBlur={handleCallsignBlur}
+        callsignLookupStatus={callsignLookupStatus}
       />
     </div>
   );

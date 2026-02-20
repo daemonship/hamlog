@@ -1,9 +1,9 @@
 import uuid
-from datetime import date, time
+from datetime import date, datetime, time
 from typing import Optional
 
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID
-from sqlalchemy import Date, ForeignKey, Numeric, String, Text, Time, Uuid
+from sqlalchemy import Date, DateTime, ForeignKey, Numeric, String, Text, Time, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.database import Base
@@ -48,3 +48,16 @@ class QSO(Base):
     created_by: Mapped[uuid.UUID] = mapped_column(
         Uuid(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
+
+
+class CallsignCache(Base):
+    """Cached HamQTH callsign lookup results with 30-day TTL."""
+
+    __tablename__ = "callsign_cache"
+
+    callsign: Mapped[str] = mapped_column(String(20), primary_key=True)
+    name: Mapped[Optional[str]] = mapped_column(String(100))
+    qth: Mapped[Optional[str]] = mapped_column(String(200))
+    grid: Mapped[Optional[str]] = mapped_column(String(8))
+    dxcc: Mapped[Optional[str]] = mapped_column(String(50))
+    cached_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)

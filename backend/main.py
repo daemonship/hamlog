@@ -8,6 +8,7 @@ from slowapi.util import get_remote_address
 
 from backend.auth.users import auth_backend, fastapi_users
 from backend.database import create_db_and_tables
+from backend.routers.hamqth import router as hamqth_router
 from backend.routers.parse import router as parse_router
 from backend.routers.qso import router as qso_router
 from backend.schemas import UserCreate, UserRead, UserUpdate
@@ -70,6 +71,10 @@ app.include_router(qso_router)
 # ── NL parse routes ───────────────────────────────────────────────────────────
 
 app.include_router(parse_router)
+
+# ── Callsign lookup routes ────────────────────────────────────────────────────
+
+app.include_router(hamqth_router)
 
 
 # ── Health check ──────────────────────────────────────────────────────────────
