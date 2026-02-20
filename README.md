@@ -16,7 +16,13 @@ HamLog lets amateur radio operators log QSOs (contacts) by typing natural langua
 | AI parsing confirmation UI | ✅ Complete | Highlighted fields, confidence bar |
 | HamQTH callsign lookup | ✅ Complete | Session-based XML API, 30-day cache, graceful degradation |
 | Contact log view, search & ADIF export | ✅ Complete | Sortable columns, callsign search, ADIF 3.1.4 download |
-| Code review | 🚧 In Progress | |
+| Code review & release | ✅ Complete | Tagged v0.1.0, 20 tests passing |
+
+## Feedback & Ideas
+
+> **This project is being built in public and we want to hear from you.**
+> Found a bug? Have a feature idea? Something feel wrong or missing?
+> **[Open an issue](../../issues)** — every piece of feedback directly shapes what gets built next.
 
 ## Stack
 
