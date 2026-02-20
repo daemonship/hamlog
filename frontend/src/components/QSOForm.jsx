@@ -33,8 +33,8 @@ function buildInitial(initialValues) {
   const values = { ...DEFAULTS };
   for (const [k, v] of Object.entries(initialValues)) {
     if (v !== null && v !== undefined && v !== '') {
-      values[k] = v;
-      // Only mark as AI-populated if this key has a value from the parser
+      // Normalize time to HH:MM for the time input (API returns HH:MM:SS)
+      values[k] = k === 'time_on' ? String(v).slice(0, 5) : v;
       aiFields.add(k);
     }
   }
@@ -218,8 +218,9 @@ function Field({ label, required, aiField, children }) {
 }
 
 export default function QSOForm({ initialValues, aiPopulated, onSave, loading, error }) {
-  const { values: initVals, aiFields } = buildInitial(initialValues);
+  const { values: initVals, aiFields: initAiFields } = buildInitial(initialValues);
   const [vals, setVals] = useState(initVals);
+  const [aiFields, setAiFields] = useState(initAiFields);
   const [focused, setFocused] = useState(null);
   const callRef = useRef(null);
 
@@ -227,6 +228,7 @@ export default function QSOForm({ initialValues, aiPopulated, onSave, loading, e
   useEffect(() => {
     const { values, aiFields: newAI } = buildInitial(initialValues);
     setVals(values);
+    setAiFields(newAI);
   }, [initialValues]);
 
   useEffect(() => {

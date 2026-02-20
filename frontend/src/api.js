@@ -61,4 +61,11 @@ export async function deleteQSO(id) {
   await api.delete(`/qso/${id}`);
 }
 
+// ── NL Parse ─────────────────────────────────────────────
+
+export async function parseQSO(text) {
+  const response = await api.post('/parse', { text });
+  return response.data; // { parsed, confidence, raw_text }
+}
+
 export default api;
