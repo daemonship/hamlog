@@ -1,0 +1,370 @@
+/* ═══════════════════════════════════════════════════════
+   HamLog — Terminal/Radio Operator Aesthetic
+   Dark. Dense. Technical. Every pixel earned.
+═══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+/* ── Custom properties ────────────────────────────────── */
+:root {
+  --bg-void:        #080c0e;
+  --bg-base:        #0d1117;
+  --bg-surface:     #111820;
+  --bg-elevated:    #161e28;
+  --bg-hover:       #1a2430;
+
+  --green-bright:   #39d353;
+  --green-dim:      #1e7a30;
+  --green-glow:     rgba(57, 211, 83, 0.15);
+  --green-subtle:   rgba(57, 211, 83, 0.06);
+
+  --amber:          #f59e0b;
+  --amber-dim:      #92600a;
+  --amber-glow:     rgba(245, 158, 11, 0.15);
+  --amber-highlight: rgba(245, 158, 11, 0.12);
+
+  --cyan:           #22d3ee;
+  --cyan-dim:       #0e7490;
+
+  --red:            #ef4444;
+  --red-glow:       rgba(239, 68, 68, 0.15);
+
+  --text-primary:   #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted:     #475569;
+  --text-ghost:     #2d3748;
+
+  --border:         #1e2d3d;
+  --border-active:  #2a3f52;
+  --border-green:   rgba(57, 211, 83, 0.4);
+  --border-amber:   rgba(245, 158, 11, 0.4);
+
+  --font-mono:      'IBM Plex Mono', 'Share Tech Mono', 'Courier New', monospace;
+  --font-display:   'Orbitron', 'IBM Plex Mono', monospace;
+
+  --radius-none:    0;
+  --transition:     120ms ease;
+
+  --scan-line: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+}
+
+/* ── Reset ────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-mono);
+  background-color: var(--bg-void);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  /* Subtle scan line texture */
+  background-image: var(--scan-line);
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Typography ───────────────────────────────────────── */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+h1 { font-size: 1.4rem; }
+h2 { font-size: 1.1rem; }
+h3 { font-size: 0.9rem; }
+
+code, .mono { font-family: var(--font-mono); }
+
+/* ── Links ────────────────────────────────────────────── */
+a {
+  color: var(--green-bright);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+a:hover { color: var(--cyan); text-decoration: underline; }
+
+/* ── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--border-active); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ═══════════════════════════════════════════════════════
+   FORM ELEMENTS — Sharp, technical, no radius
+═══════════════════════════════════════════════════════ */
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.field-label .required {
+  color: var(--amber);
+  margin-left: 2px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+select,
+textarea {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-none);
+  padding: 7px 10px;
+  outline: none;
+  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--green-bright);
+  background: var(--bg-elevated);
+  box-shadow: 0 0 0 2px var(--green-glow), inset 0 0 0 1px var(--green-dim);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-ghost);
+}
+
+/* Uppercase callsign-style inputs */
+input.callsign-input {
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+  color: var(--green-bright);
+  font-weight: 600;
+}
+
+/* AI-highlighted fields */
+.field-ai-populated input,
+.field-ai-populated select,
+.field-ai-populated textarea {
+  border-color: var(--border-amber);
+  background: var(--amber-highlight);
+  box-shadow: inset 0 0 0 1px var(--amber-dim);
+}
+.field-ai-populated input:focus,
+.field-ai-populated select:focus,
+.field-ai-populated textarea:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 2px var(--amber-glow), inset 0 0 0 1px var(--amber-dim);
+}
+
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.55rem;
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+  color: var(--amber);
+  text-transform: uppercase;
+  vertical-align: middle;
+  margin-left: 6px;
+  opacity: 0.9;
+}
+
+/* Select arrow */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2339d353'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+  cursor: pointer;
+}
+
+select option {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 64px;
+}
+
+/* ── Buttons ──────────────────────────────────────────── */
+.btn {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: var(--radius-none);
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--green-dim);
+  color: var(--green-bright);
+  border-color: var(--green-bright);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--green-bright);
+  color: var(--bg-void);
+  box-shadow: 0 0 16px var(--green-glow);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--red);
+  border-color: var(--red);
+  padding: 4px 10px;
+  font-size: 0.65rem;
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--red);
+  color: var(--bg-void);
+  box-shadow: 0 0 10px var(--red-glow);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+.btn-ghost:hover:not(:disabled) {
+  border-color: var(--border-active);
+  color: var(--text-primary);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Error / Status messages ──────────────────────────── */
+.error-banner {
+  background: var(--red-glow);
+  border: 1px solid var(--red);
+  border-left: 3px solid var(--red);
+  color: var(--red);
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+}
+
+.success-banner {
+  background: var(--green-glow);
+  border: 1px solid var(--green-bright);
+  border-left: 3px solid var(--green-bright);
+  color: var(--green-bright);
+  padding: 8px 12px;
+  font-size: 0.8rem;
+}
+
+/* ── Panels & Cards ───────────────────────────────────── */
+.panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+}
+
+.panel-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-elevated);
+}
+
+.panel-header h2 {
+  color: var(--green-bright);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+}
+
+.panel-body {
+  padding: 16px;
+}
+
+/* ── Utility ──────────────────────────────────────────── */
+.text-green  { color: var(--green-bright); }
+.text-amber  { color: var(--amber); }
+.text-muted  { color: var(--text-muted); }
+.text-dim    { color: var(--text-secondary); }
+
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+
+/* ── Blinking cursor effect ───────────────────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  background: var(--green-bright);
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+}
+
+/* ── Spinner ──────────────────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--green-bright);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+/* ── Glow text animation ──────────────────────────────── */
+@keyframes glow-pulse {
+  0%, 100% { text-shadow: 0 0 4px var(--green-bright); }
+  50%       { text-shadow: 0 0 12px var(--green-bright), 0 0 24px var(--green-dim); }
+}
